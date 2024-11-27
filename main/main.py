@@ -3,6 +3,8 @@ import os
 import sys
 import numpy as np
 import logging
+import argparse
+import json
 
 
 # Add the root directory of your project to the PYTHONPATH
@@ -16,7 +18,7 @@ from modules.mpccalc.aggregator import AggregatorHandler
 #                    datefmt='%m/%d/%Y %I:%M:%S %p')
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s %(levelname)s %(message)s', 
                     datefmt='%m/%d/%Y %I:%M:%S %p')
-async def main():
+async def main(input_request={"columnNo": 0, "aggregator": "SUM"}):
     await mpc.start()
     secint = mpc.SecInt(32)
     if mpc.pid == 0:
@@ -44,10 +46,15 @@ async def main():
 
     #request 
     input_request = {'secret_table': secret_table, 
-                     'columnNo': 0, 
-                     'aggregator': 'SUM'}
+                     'columnNo': input_request.get('columnNo', 0), 
+                     'aggregator': input_request.get('aggregator', 'SUM')}
     result = await my_aggregator_handler.handle(input_request)
     logging.info('Result Chain1: {}'.format(result))
 
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description='Run MPC with input request')
+    parser.add_argument('--input_request', type=str, required=True, help='Input request as JSON string')
+    args = parser.parse_args()
 
-mpc.run(main())
+    input_request = json.loads(args.input_request)
+    mpc.run(main(input_request))

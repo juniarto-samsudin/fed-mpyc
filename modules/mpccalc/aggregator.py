@@ -33,9 +33,9 @@ class AggregatorHandler(AbstractHandler):
             else:
                 for index in np.ndindex(my_column.shape):
                     #handling uneven distribution
-                    #if my_column[index] is not int, in this case is 0, then it is a secret share
-                    #if not isinstance(my_column[index], int):
-                    newList.append(my_column[index])
+                    #if my_column[index] is not int, in this case is not 0, then it is a secret share
+                    if not isinstance(my_column[index], int):
+                        newList.append(my_column[index])
             columnItemSum = mpc.sum(newList)
             total = await mpc.output(columnItemSum)
             logging.info('Total Colum1: {}'.format(total))
