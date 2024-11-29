@@ -26,16 +26,12 @@ class AggregatorHandler(AbstractHandler):
             columnItemSum = 0
             my_column = secret_table[:,columnNo]
             if condList:
-                #TODO: Implement Uneven Distribution
                 for index, cond in zip(np.ndindex(my_column.shape), condList):
                     x = mpc.if_else(cond, 0, my_column[index])
                     newList.append(x)
             else:
                 for index in np.ndindex(my_column.shape):
-                    #handling uneven distribution
-                    #if my_column[index] is not int, in this case is not 0, then it is a secret share
-                    if not isinstance(my_column[index], int):
-                        newList.append(my_column[index])
+                    newList.append(my_column[index])
             columnItemSum = mpc.sum(newList)
             total = await mpc.output(columnItemSum)
             logging.info('Total Colum1: {}'.format(total))
@@ -46,9 +42,18 @@ class AggregatorHandler(AbstractHandler):
                 return total
         
     async def aggregate_count(self, secret_table, columnNo, condList):
-            print("Aggregator: I'll aggregate the COUNT")
+            logging.info("Aggregator: I'll aggregate the COUNT")
+            newList = []
             my_column = secret_table[:,columnNo]
-            count = len([my_column[index] for index in np.ndindex(my_column.shape) if not isinstance(my_column[index], int)])
+            #count = len([my_column[index] for index in np.ndindex(my_column.shape) if not isinstance(my_column[index], int)])
+            if condList:
+                 for index, cond in zip(np.ndindex(my_column.shape), condList):
+                     x = mpc.if_else(cond, 0, my_column[index])
+                     newList.append(x)
+            else:
+                for index in np.ndindex(my_column.shape):
+                    newList.append(my_column[index])
+            count = len(newList)
             logging.info('Count Colum1: {}'.format(count))
             if super()._next_handler:
                  return await super().handle(count)

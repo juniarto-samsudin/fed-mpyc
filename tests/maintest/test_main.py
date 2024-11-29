@@ -18,9 +18,10 @@ def test_sum_column0():
     result = subprocess.run(
         ["python", script_path,"--input_request", '{"columnNo":0, "aggregator":"SUM"}', "-M3"], capture_output=True, text=True
     )
-
+    
     logging.info(result.returncode)
     logging.info(result.stdout.strip())
+    assert result.returncode == 0
 
 def test_sum_column1():
     logging.info("Test SUM of COLUMN 1 with EVEN Distribution")
@@ -32,6 +33,7 @@ def test_sum_column1():
 
     logging.info(result.returncode)
     logging.info(result.stdout.strip())
+    assert result.returncode == 0
 
 def test_count():
     logging.info("Test COUNT of COLUMN 0 with EVEN Distribution")
@@ -42,3 +44,4 @@ def test_count():
     )
     logging.info(result.returncode)
     logging.info(result.stdout.strip())
+    assert result.returncode == 0
