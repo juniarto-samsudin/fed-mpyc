@@ -12,7 +12,9 @@ class AggregatorHandler(AbstractHandler):
         condList = request.get('condList', None)
         aggregatorDict = {
             'SUM': self.aggregate_sum,
-            'COUNT': self.aggregate_count
+            'COUNT': self.aggregate_count,
+            'MAX': self.aggregate_max,
+            'MIN': self.aggregate_min
         }
 
         if aggregator in aggregatorDict:
@@ -59,3 +61,27 @@ class AggregatorHandler(AbstractHandler):
                  return await super().handle(count)
             else:
                 return count
+    
+    async def aggregate_max(self, secret_table, columnNo, condList):
+            logging.info("Aggregator: I'll aggregate the MAX")
+            newList = []
+            my_column = secret_table[:,columnNo]
+            max = mpc.max(my_column)
+            logging.info('Max Colum1: {}'.format(await mpc.output(max)))
+            if super()._next_handler:
+                 return await super().handle(max)
+            else:
+                return max
+    
+    async def aggregate_min(self, secret_table, columnNo, condList):
+            logging.info("Aggregator: I'll aggregate the MIN")
+            newList = []
+            my_column = secret_table[:,columnNo]
+            min = mpc.min(my_column)
+            logging.info('Min Colum1: {}'.format(await mpc.output(min)))
+            if super()._next_handler:
+                 return await super().handle(min)
+            else:
+                return min
+            
+    

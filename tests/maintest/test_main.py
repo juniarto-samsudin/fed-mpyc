@@ -45,3 +45,25 @@ def test_count():
     logging.info(result.returncode)
     logging.info(result.stdout.strip())
     assert result.returncode == 0
+
+def test_max():
+    logging.info("Test MAX of COLUMN 1 with EVEN Distribution")
+    basic_info()
+    script_path = os.path.join("main", "main.py")
+    result = subprocess.run(
+        ["python", script_path,"--input_request", '{"columnNo":0, "aggregator":"MAX"}', "-M3"], capture_output=True, text=True
+    )
+    logging.info(result.returncode)
+    logging.info(result.stdout.strip())
+    assert result.returncode == 0
+
+def test_min():
+    logging.info("Test MIN of COLUMN 1 with EVEN Distribution")
+    basic_info()
+    script_path = os.path.join("main", "main.py")
+    result = subprocess.run(
+        ["python", script_path,"--input_request", '{"columnNo":0, "aggregator":"MIN"}', "-M3"], capture_output=True, text=True
+    )
+    logging.info(result.returncode)
+    logging.info(result.stdout.strip())
+    assert result.returncode == 0
