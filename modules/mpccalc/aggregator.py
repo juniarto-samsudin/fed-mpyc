@@ -14,7 +14,12 @@ class AggregatorHandler(AbstractHandler):
             'SUM': self.aggregate_sum,
             'COUNT': self.aggregate_count,
             'MAX': self.aggregate_max,
-            'MIN': self.aggregate_min
+            'MIN': self.aggregate_min,
+            #TODO: Implement the following aggregators
+            #'AVG': self.aggregate_avg,
+            #'STD': self.aggregate_std,
+            #'MEDIAN': self.aggregate_median,
+            #'MODE': self.aggregate_mode,
         }
 
         if aggregator in aggregatorDict:
