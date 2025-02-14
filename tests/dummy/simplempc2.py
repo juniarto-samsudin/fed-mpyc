@@ -1,30 +1,25 @@
-import asyncio
-from mpyc.runtime import mpc
-from mpyc.runtime import Party
+#from mpyc.runtime import mpc
+from mpyc.runtime import setup2
 
-async def run_mpyc_with_custom_ports():
-    # Define participant addresses and ports
-    mpc.parties = [
-        Party(pid=0, host='127.0.0.1', port=5000),  # Party 0
-        Party(pid=1, host='127.0.0.1', port=5001),  # Party 1
-        Party(pid=2, host='127.0.0.1', port=5002),  # Party 2
-    ]
-    mpc.pid = 2  # Set the current participant ID (Party 0)
+mpc = setup2(2)
 
-    # Initialize MPyC runtime
+
+async def main():
+    print(mpc.parties)
     await mpc.start()
-
-    # Define a secure computation
-    secint = mpc.SecInt()
-    a = secint(5)
-    b = secint(7)
-    result = mpc.output(a + b)  # Secure computation (5 + 7)
-
-    # Await and print result
-    print(f"The result is: {await result}")
-
-    # Shutdown MPyC runtime
+    secint = mpc.SecInt(32)
+    if mpc.pid == 0:
+        local_table = [[1,2],
+                       [3,4]]
+        secret_table = [[mpc.input(secint(value)) for value in row] for row in local_table]
+    elif mpc.pid == 1:
+        local_table = [[5,6],
+                       [7,8]]
+        secret_table = [[mpc.input(secint(value)) for value in row] for row in local_table]
+    elif mpc.pid == 2:
+        local_table = [[9,10],
+                       [11,12]]
+        secret_table = [[mpc.input(secint(value)) for value in row] for row in local_table]   
     await mpc.shutdown()
 
-if __name__ == "__main__":
-    asyncio.run(run_mpyc_with_custom_ports())
+mpc.run(main())

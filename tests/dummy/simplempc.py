@@ -1,6 +1,11 @@
-from mpyc.runtime import mpc
+#from mpyc.runtime import mpc
+from mpyc.runtime import setup2
+
+mpc = setup2(0)
+
 
 async def main():
+    print(mpc.parties)
     await mpc.start()
     secint = mpc.SecInt(32)
     if mpc.pid == 0:

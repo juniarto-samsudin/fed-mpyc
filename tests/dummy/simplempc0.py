@@ -1,40 +1,24 @@
-import asyncio
-from mpyc.runtime import mpc
-from mpyc.runtime import Party
+#from mpyc.runtime import mpc
+from mpyc.runtime import setup2
+from mpyc.runtime import Runtime
+mpc = setup2(0)
 
-def setup_participant(participant_id, parties):
-    """
-    Set up the MPyC runtime for a given participant.
-    """
-    mpc.parties = [Party(**party) for party in parties]
-    mpc.pid = participant_id  # Set the current participant ID
-
-async def run_mpyc():
-    # Start the MPyC runtime
+async def main():
     print(mpc.parties)
     await mpc.start()
-
-    # Define a secure computation
-    secint = mpc.SecInt()
-    a = secint(5)
-    b = secint(7)
-    result = mpc.output(a + b)  # Secure computation (5 + 7)
-
-    # Await and print the result
-    print(f"Node {mpc.pid}: The result is: {await result}")
-
-    # Shutdown MPyC runtime
+    secint = mpc.SecInt(32)
+    if mpc.pid == 0:
+        local_table = [[1,2],
+                       [3,4]]
+        secret_table = [[mpc.input(secint(value)) for value in row] for row in local_table]
+    elif mpc.pid == 1:
+        local_table = [[5,6],
+                       [7,8]]
+        secret_table = [[mpc.input(secint(value)) for value in row] for row in local_table]
+    elif mpc.pid == 2:
+        local_table = [[9,10],
+                       [11,12]]
+        secret_table = [[mpc.input(secint(value)) for value in row] for row in local_table]   
     await mpc.shutdown()
 
-if __name__ == "__main__":
-    # Example participant configuration
-    participant_id = 0  # Change this for each participant
-    parties = [
-        {"pid": 0, "host": "localhost", "port": 5000},
-        {"pid": 1, "host": "localhost", "port": 5001},
-        {"pid": 2, "host": "localhost", "port": 5002},
-    ]
-
-    # Set up participant and run
-    setup_participant(participant_id, parties)
-    asyncio.run(run_mpyc())
+mpc.run(main())

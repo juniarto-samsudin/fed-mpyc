@@ -52,6 +52,7 @@ async def main(input_request={"columnNo": 0, "aggregator": "SUM"}):
     secret_table = np.array(
         [[secint(x) for x in row] for row in secret_table]
     )
+    logging.info('secret_table size is: {}'.format(secret_table.shape))
 
     #setting chain1
     my_aggregator_handler = AggregatorHandler()

@@ -1,1 +1,10 @@
 To install modified mpyc module [mpyc directory], just go inside [mpyc] directory and do [pip install .]
+
+pytest:
+pytest --log-cli-level=INFO tests/maintest
+
+testing setup2
+at tests/dummy
+- python simplempc0.py
+- python simplempc1.py
+- python simplempc2.py
